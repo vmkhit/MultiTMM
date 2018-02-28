@@ -51,13 +51,13 @@ type Layer
     id::String
     mat::Material
     d::Real
-    function Layer(id ="coh", mat = Material(), kwargs...)
+    function Layer(id ="c", mat = Material(), kwargs...)
         if isempty(kwargs)
             d = 0.0
         else
             d = kwargs[1]
         end
-        return new(mat, d)
+        return new(id, mat, d)
     end
 end
 
@@ -127,7 +127,8 @@ function Matrix2x2_coh(r, t, d)
 end
 
 function Matrix2x2_inc(r, t, d)
-
+    p = abs2(cis(d))
+    [1.0/p -abs2(r)/p; p*abs2(r) p*(abs2(1.0 - r*r) - abs2(r*r))]/abs2(t)
 end
 
 
@@ -171,4 +172,34 @@ function tmm_ellipso(lambda::Real, kp::Vector{<:Real}, S::Stack)
     rp, tp =  tmm_matrix(2, lambda, kp, S)
     rr = rp/rs
     return abs(rr), cos(angle(rr))
+end
+
+
+function RT_matrix_inc(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
+    local k0 = 2.0*pi/lambda;
+    local q = norm(kp);
+    Mg = eye(Complex64, 2)
+    Ml = zeros(Complex64, (2,2))
+    L::Layer = Layer()
+    I::Interface = Interface()
+    nL = length(S.Layers)
+    for i = 1:(nL-2)
+        L = S.Layers[i]
+        I = S.Interfs[i]
+        r, t = intface_rt(p, I, k0, kp)
+        di = betz(L.mat, k0, q)*L.d
+        Ml = Matrix2x2_coh(r, t, di)
+        Mg  = Mg*Ml
+    end
+    # calculating substrate separatly
+    L = S.Layers[nL -1]
+    I = S.Interfs[nL - 1]
+    r, t = intface_rt(p, I, k0, kp)
+    di = betz(L.mat, k0, q)*L.d
+    Mlocal = Matrix2x2_inc(r, t, di)
+    Mg = [abs2(Mg[1,1]) -abs2(Mg[1,2]); abs2(Mg[2,1]) (abs2(det(Mg))-abs2(Mg[1,2]*Mg[2,1]))]*Ml
+
+    R = Mglobal[2,1]/Mglobal[1,1]
+    T = 1.0/Mglobal[1,1]
+    return R, T
 end

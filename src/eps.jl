@@ -1,7 +1,7 @@
 using DataFrames
 using Interpolations
 using Dierckx
-path = "../eps_data/"
+path = "C:\\Users\\vmkhi\\Documents\\Github\\MultiTMM\\eps_data"
 function nk_import(fname, x)
     for f in filter(x -> ismatch(r"\.csv|\.txt", x), readdir(path))
         for f in filter(x -> startswith(x, fname), readdir(path))
@@ -12,6 +12,10 @@ function nk_import(fname, x)
         end
     end
 end
+
+
+nk_import("PMMA", 800)
+
 
 function eps_Au(w)
     hartree = 27.2116;              #  2 * Rydberg in eV

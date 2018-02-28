@@ -1,5 +1,5 @@
 using MultiTMM
-using HDF5, JLD
+#using HDF5, JLD
 using PyPlot
 
 nAg_JC(x)= nk_import("Ag(JC-eV)", x)
@@ -13,7 +13,6 @@ nSi(x) = nk_import("Si111(sopra)", x)
 nSiO2(x) = nk_import("SiO2(sopra)", x)
 nPMMA(x) = nk_import("PMMA", x)
 
- nPMMA(500)
 
 
 mutable struct Lattice2D
@@ -34,7 +33,7 @@ function make_hole(nlayers::Integer, mat_hole::Material, mat_layer::Material, th
     mat = Material("epsmu", eps_eff)
     Ls = Vector{Layer}(nlayers)
     for i = 1:nlayers
-        Ls[i] = Layer(mat, h)
+        Ls[i] = Layer("c", mat, h)
     end
     return Ls
 end
@@ -47,7 +46,7 @@ function make_cone(nlayers::Integer, mat_cone::Material, mat_host::Material, hei
         ff = pi*ri^2/lattice.A
         eps_eff = ff*mat_cone.eps +(1.0 - ff)*mat_host.eps
         mat = Material("epsmu", eps_eff)
-        Ls[i+1] = Layer(mat, h)
+        Ls[i+1] = Layer("c", mat, h)
     end
     return Ls
 end
@@ -58,7 +57,7 @@ function make_cone_vol(mat_cone::Material, mat_host::Material, height::Real, rbo
     ff = Vcone/Vcell
     eps_eff = ff*mat_cone.eps +(1.0 - ff)*mat_host.eps
     mat = Material("epsmu", eps_eff)
-    return Layer(mat, height)
+    return Layer("c", mat, height)
 end
 
 mat1 = Material()
@@ -74,15 +73,20 @@ nwl = 500
 wl = linspace(200, 900, nwl)
 R = Array{Float64}(nwl)
 T = Array{Float64}(nwl)
-
+Ri = Array{Float64}(nwl)
+Ti = Array{Float64}(nwl)
+mlat = Lattice2D(500, pi/2)
 for i = 1:nwl
     matSiO2 =  Material("nk", nSiO2(wl[i]))
-    matPMMA = Material("nk", 1.58)
+    matPMMA = Material("nk", 4)
     L0  = Layer()
-    L1 = Layer(matPMMA, 500)
-    L2 = Layer(matSiO2)
-    S = Stack([L0, L1, L2], zeros(2))
-    R[i], T[i] = RT_calc(1, wl[i], zeros(2), S::Stack)
+    Lhole =  make_hole(1, Material(), matPMMA, 100, 10, mlat)
+    L1 = Layer("c", matPMMA, 500)
+    L2 = Layer("i", matSiO2, 1e6)
+    Ls = [L0; Lhole; L2; L0]
+    S = Stack(Ls, zeros(length(Ls)-1))
+    R[i], T[i] = tmm_RT(1, wl[i], zeros(2), S)
+    Ri[i], Ti[i] = RT_matrix_inc(1, wl[i], zeros(2), S)
 end
 
 begin
