@@ -127,12 +127,12 @@ end
 
 function Matrix2x2_coh(r, t, rrev, trev, d)
     # I used here the general form, which will allow me to impliment the rough surface case as well
-    p = cis(d)
+    p = cis(-d)
     return [p r*p; r/p (t*trev - r*rrev)/p]./t
 end
 
 function Matrix2x2_inc(r, t, rrev, trev, d)
-    p = abs2(cis(d))
+    p = abs2(cis(-d))
     [p -abs2(r)*p; abs2(r)/p (abs2(t*trev) - abs2(r*rrev))/p]./abs2(t)
 end
 

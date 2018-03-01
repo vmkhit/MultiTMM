@@ -15,6 +15,7 @@ nPMMA(x) = nk_import("PMMA", x)
 
 
 
+
 mutable struct Lattice2D
     a::Real
     phi::Real
@@ -61,7 +62,7 @@ function make_cone_vol(mat_cone::Material, mat_host::Material, height::Real, rbo
 end
 
 mat1 = Material()
-mat2 = Material("nk", 1.5)
+mat2 = Material("nk", 1.58)
 
 make_hole(5, mat1, mat2, 100, 150, Lattice2D(500, pi/2))
 
@@ -70,7 +71,7 @@ make_cone_vol( mat2, mat1, 150, 200, 20, Lattice2D(500, pi/2))
 
 
 nwl = 500
-wl = linspace(200, 900, nwl)
+wl = linspace(250, 900, nwl)
 R = Array{Float64}(nwl)
 T = Array{Float64}(nwl)
 Ri = Array{Float64}(nwl)
@@ -78,12 +79,13 @@ Ti = Array{Float64}(nwl)
 mlat = Lattice2D(500, pi/2)
 for i = 1:nwl
     matSiO2 =  Material("nk", nSiO2(wl[i]))
-    matPMMA = Material("nk", 6)
+    matPMMA = Material("nk", nPMMA(wl[i]))
+    matAg = Material("nk", nAg_Wi(wl[i]))
     L0  = Layer()
-    Lhole =  make_hole(1, Material(), matPMMA, 40, 10, mlat)
-    L1 = Layer("c", matPMMA, 100)
+    Lhole =  make_hole(1, Material(), matPMMA, 100, 10, mlat)
+    L1 = Layer("c", matAg, 15)
     L2 = Layer("i", matSiO2, 1e6)
-    Ls = [L0; Lhole; L2; L0]
+    Ls = [L0; Lhole; L1; L2; L0]
     S = Stack(Ls, zeros(length(Ls)-1))
     R[i], T[i] = tmm_RT(1, wl[i], zeros(2), S)
     Ri[i], Ti[i] = RT_matrix_inc(1, wl[i], zeros(2), S)
@@ -94,7 +96,7 @@ begin
     plot(wl, R, label = "R")
     plot(wl, Ti, label = "Tinc")
     plot(wl, Ri, label = "Rinc")
-    xlim([300,  900])
+    xlim([250,  900])
     ylim([0, 1])
     xlabel("Wavelength (nm)")
     ylabel("Transmittance")
