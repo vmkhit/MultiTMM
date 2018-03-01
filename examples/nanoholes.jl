@@ -78,10 +78,10 @@ Ti = Array{Float64}(nwl)
 mlat = Lattice2D(500, pi/2)
 for i = 1:nwl
     matSiO2 =  Material("nk", nSiO2(wl[i]))
-    matPMMA = Material("nk", 4)
+    matPMMA = Material("nk", 6)
     L0  = Layer()
-    Lhole =  make_hole(1, Material(), matPMMA, 100, 10, mlat)
-    L1 = Layer("c", matPMMA, 500)
+    Lhole =  make_hole(1, Material(), matPMMA, 40, 10, mlat)
+    L1 = Layer("c", matPMMA, 100)
     L2 = Layer("i", matSiO2, 1e6)
     Ls = [L0; Lhole; L2; L0]
     S = Stack(Ls, zeros(length(Ls)-1))
@@ -91,9 +91,12 @@ end
 
 begin
     plot(wl, T, label = "T")
-    plot(wl, R, label = "T")
+    plot(wl, R, label = "R")
+    plot(wl, Ti, label = "Tinc")
+    plot(wl, Ri, label = "Rinc")
     xlim([300,  900])
     ylim([0, 1])
     xlabel("Wavelength (nm)")
     ylabel("Transmittance")
+    legend()
 end
