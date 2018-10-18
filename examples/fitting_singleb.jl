@@ -1,5 +1,4 @@
 using MultiTMM
-using HDF5, JLD
 using PyPlot
 
 nAg_JC(x)= nk_import("Ag(JC-eV)", x)
@@ -22,38 +21,35 @@ end
 nm2eV = 1239.84193
 deg = pi/180
 
-nth = 8
-th = linspace(40, 75, nth)
+nth = 4
+th = linspace(60, 75, nth)
 
 
 # import the experimental data
-DATA = Array{Float64}(nth, 995, 5)
+# import the experimental data
+DATA1 = Array{Float64}(nth, 1103-79, 5)
+DATA2 = Array{Float64}(nth, 1103-79, 5)
+DATA3 = Array{Float64}(nth, 1103-79, 5)
+
+path_ell = "C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Nanogune\\Ellipsometry\\"
 for i = 1:nth
     theta = round(Int, th[i])
-    file = readdlm("C:\\Users\\vmkhi\\Desktop\\Ag_10ML\\171214_Chip-Zaka-1710-2\\20180215_chip-Zaka-1813-1-8ML_16ML_Plane_CDD_inc40to75_an45_MS_pos_8ML_Y119.5_"string(theta)".pae")
-    DATA[i, :, :] = file[79:end-1, 1:5]
+    file1 = readdlm(join([path_ell, "181015_Chip-Zaka-S58_Ag_10ML-15ML-20ML_an15_pos1_", string(theta),".pae"]))
+    file2 = readdlm(join([path_ell, "181015_Chip-Zaka-S58_Ag_10ML-15ML-20ML_an15_pos2_", string(theta),".pae"]))
+    file3 = readdlm(join([path_ell, "181015_Chip-Zaka-S58_Ag_10ML-15ML-20ML_an15_pos3_", string(theta),".pae"]))
+    DATA1[i, :, :] = file1[79:end-1, 1:5]
+    DATA2[i, :, :] = file2[79:end-1, 1:5]
+    DATA3[i, :, :] = file3[79:end-1, 1:5]
 end
-#=
-begin
-    for i = 1:nth
-        plot(DATA[i, :, 1],  DATA[i, :, 2], linestyle = "-", label = "new", color = "black")
-        xlim([1.55, 5])
-        ylim([0, 1.0])
-        xlabel("Energy (eV)")
-        ylabel(L"Tan(\Psi)")
-    end
-    legend()
-end
-=#
 
-ww = DATA[1, :, 1]
+ww = DATA1[1, :, 1]
 ww = linspace(1, 6, 500)
 nw = length(ww)
 
 
 
 # Drude parameters
-wp = 9.01
+wp = 9.17
 gam0 = 0.022
 
 nb = 100
@@ -69,18 +65,25 @@ CosDel = Array{Float64}(nth, nw)
 #Rs = Array{Float64}(nth, nw)
 #Ts = Array{Float64}(nth, nw)
 
-abulk = 0.357
+abulk = 0.40853
 aa = abulk/sqrt(3)
-d = 0.0
+d = 10
+bb = 1.0
+tc = 2
+tSiO2 = 2
+
 for j = 1:nw
     λ = nm2eV/ww[j]
     k = 2.0*pi/λ
+    epsAg = nAg_JC(ww[j])^2 - drude_pole(ww[j], 0, wp, gam0) + drude_pole(ww[j], 0, wp, 1.0*gam0)
     LAir = Layer()
-    LSiO2 = Layer("c", Material("nk", nSiO2(ww[j])), 2.0)
-    LSi = Layer("c", Material("nk", nSi(ww[j])))
+    LSiO2 = Layer("c", Material("nk", nSiO2(ww[j])), tSiO2)
+    LSi_top = Layer("c", Material("nk", nSi(ww[j])), tc - tSiO2)
+    LSi_bot = Layer("c", Material("nk", nSi(ww[j])))
+
     #epsAg = nAg(ww[j])^2  - drude_pole(ww[j], 0, wp, gam0) + drude_pole(ww[j], 0, wp, bb*gam0)
-    LAg = Layer("c", Material("nk", nAg_S(ww[j])), d*aa)
-    S = Stack([LAir; LSiO2; LAg; LSi], zeros(3))
+    LAg = Layer("c", Material("epsmu", epsAg, d*aa))
+    S = Stack([LAir; LSi_top; LSiO2; LAg; LSi_bot], zeros(4))
     for i = 1:nth
         θ = th[i]*deg
         TanPsi[i, j], CosDel[i, j] = tmm_ellipso(λ, [k*sin(θ), 0], S)
@@ -89,7 +92,20 @@ for j = 1:nw
     end
 end
 
-
+begin
+    subplot(121)
+    plot(ww, TanPsi[1, :])
+    xlim([1.55, 5])
+    ylim([0, 1.0])
+    xlabel("Energy (eV)")
+    ylabel(L"Tan(\Psi)")
+    subplot(122)
+    plot(ww, CosDel[1, :])
+    xlim([1.55, 5])
+    ylim([-1, 0.25])
+    xlabel("Energy (eV)")
+    ylabel(L"Cos(\Delta)")
+end
 cmap1 = ColorMap("brg")
 cmap2 = ColorMap("jet")
 labels = [L"40^o", L"45^o", L"50^o", L"55^o", L"60^o", L"65^o", L"70^o", L"75^o"]

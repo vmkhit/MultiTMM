@@ -34,9 +34,9 @@ end
 # Material can be specified as Material(eps, mu), or just Material(eps), this will by default take mu = 1.0
 
 type Interface
-    mat1::Material
-    mat2::Material
-    sig::Number
+    mat1::Material   # dielectric function of medium 1
+    mat2::Material   # dielectric function of medium 2
+    sig::Number      # conductivity at the interface
     function Interface(mat1 = Material(), mat2 = Material(), args...)
         if isempty(args)
             sig = 0.0
@@ -48,9 +48,9 @@ type Interface
 end
 
 type Layer
-    id::String
-    mat::Material
-    d::Real
+    id::String  # coherent, incoherent
+    mat::Material  # layer material
+    d::Real        # layer thickness
     function Layer(id ="c", mat = Material(), kwargs...)
         if isempty(kwargs)
             d = 0.0
@@ -89,6 +89,7 @@ type Stack
         return new(Layers, Sigmas, Interfs)
     end
 end
+
 
 function modify_stack_layers(S::Stack, r::UnitRange{<:Integer}, L = Layer[], sigs = Number[])
     #This isn't finished yet, need to modified to add the interface update as well

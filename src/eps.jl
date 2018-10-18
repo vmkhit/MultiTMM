@@ -1,11 +1,12 @@
 using DataFrames
+using DelimitedFiles
 using Interpolations
 using Dierckx
-path = "C:\\Users\\vmkhi\\Documents\\Github\\MultiTMM\\eps_data"
+path_eps = "../eps_data"
 function nk_import(fname, x)
-    for f in filter(x -> ismatch(r"\.csv|\.txt", x), readdir(path))
-        for f in filter(x -> startswith(x, fname), readdir(path))
-            n_data = readdlm(joinpath(path, f))
+    for f in filter(x -> ismatch(r"\.csv|\.txt", x), readdir(path_eps))
+        for f in filter(x -> startswith(x, fname), readdir(path_eps))
+            n_data = readdlm(joinpath(path_eps, f))
             n_re = Spline1D(n_data[:,1], n_data[:, 2])
             n_im = Spline1D(n_data[:, 1], n_data[:, 3])
             return complex(n_re(x), n_im(x))
@@ -14,7 +15,7 @@ function nk_import(fname, x)
 end
 
 
-nk_import("PMMA", 800)
+#nk_import("PMMA", 800)
 
 
 function eps_Au(w)
