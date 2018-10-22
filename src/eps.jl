@@ -2,7 +2,7 @@ using DataFrames
 using DelimitedFiles
 using Interpolations
 using Dierckx
-path_eps = "../eps_data"
+path_eps = "C:\\Users\\vmkhi\\Documents\\Github\\MultiTMM\\eps_data"
 function nk_import(fname, x)
     for f in filter(x -> ismatch(r"\.csv|\.txt", x), readdir(path_eps))
         for f in filter(x -> startswith(x, fname), readdir(path_eps))
@@ -15,7 +15,6 @@ function nk_import(fname, x)
 end
 
 
-#nk_import("PMMA", 800)
 
 
 function eps_Au(w)

@@ -3,7 +3,7 @@ function epston(epsilon)
     k = sqrt(abs(epsilon) - real(epsilon))/sqrt(2)
     return n+im*k
 end
-type Material
+mutable struct Material
     id::String
     eps::Number
     mu::Number
@@ -33,7 +33,7 @@ type Material
 end
 # Material can be specified as Material(eps, mu), or just Material(eps), this will by default take mu = 1.0
 
-type Interface
+mutable struct Interface
     mat1::Material   # dielectric function of medium 1
     mat2::Material   # dielectric function of medium 2
     sig::Number      # conductivity at the interface
@@ -47,7 +47,7 @@ type Interface
      end
 end
 
-type Layer
+mutable struct Layer
     id::String  # coherent, incoherent
     mat::Material  # layer material
     d::Real        # layer thickness
@@ -62,9 +62,9 @@ type Layer
 end
 
 function extract_params(input::Union{Material, Interface, Layer})
-    if typeof(input) == Material
+    if mutable structof(input) == Material
         return input.eps, input.mu
-    elseif typeof(input) == Interface
+    elseif mutable structof(input) == Interface
         return input.mat1, input.mat2, input.sig
     else
         return input.id, input.mat, input.d
@@ -79,7 +79,7 @@ function update_interface_list(L::Vector{Layer}, sig::Vector{<:Number}, nl::Inte
     return Is
 end
 
-type Stack
+mutable struct Stack
     Layers::Vector{Layer} #List of layers
     Sigmas::Vector{Number}
     Interfs::Vector{Interface}  # List of Interfaces
