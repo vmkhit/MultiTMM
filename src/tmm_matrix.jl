@@ -62,9 +62,9 @@ mutable struct Layer
 end
 
 function extract_params(input::Union{Material, Interface, Layer})
-    if mutable structof(input) == Material
+    if typeof(input) == Material
         return input.eps, input.mu
-    elseif mutable structof(input) == Interface
+    elseif typeof(input) == Interface
         return input.mat1, input.mat2, input.sig
     else
         return input.id, input.mat, input.d
