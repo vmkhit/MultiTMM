@@ -30,8 +30,8 @@ th = linspace(60, 75, nth)
 DATA1 = Array{Float64}(nth, 1103-79, 5)
 DATA2 = Array{Float64}(nth, 1103-79, 5)
 DATA3 = Array{Float64}(nth, 1103-79, 5)
-
 path_ell = "C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Nanogune\\Ellipsometry\\"
+
 for i = 1:nth
     theta = round(Int, th[i])
     file1 = readdlm(join([path_ell, "181015_Chip-Zaka-S58_Ag_10ML-15ML-20ML_an15_pos1_", string(theta),".pae"]))
@@ -65,8 +65,8 @@ abulk = 0.40853
 aa = abulk/sqrt(3)
 d = 10
 bb = 1.0
-tc = 2
-tSiO2 = 2
+tc = 2.0
+tSiO2 = 2.0
 
 for j = 1:nw
     λ = nm2eV/ww[j]

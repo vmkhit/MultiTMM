@@ -13,6 +13,19 @@ nSi(x) = nk_import("Si111(sopra)", x)
 nSiO2(x) = nk_import("SiO2(sopra)", x)
 nPMMA(x) = nk_import("PMMA", x)
 
+nSi(x) = nk_import("Si111(sopra)", x)
+nSi_P(x) = nk_import("Si(Palik(0.3-15))",x)
+nSiO2_P(x) = nk_import("SiO2(Palik(0.3-15))", x)
+nSiO2(x) = nk_import("SiO2(sopra)", x)
+nInAs(x) = nk_import("InAs(film)", x)
+nAl(x) = nk_import("Al(film)", x)
+
+nAgIR_R(x) = nk_import("Ag(IR-Rakic)", x)
+nAgIR_Y(x) = nk_import("Ag(IR-Yang)", x)
+nAgIR_B(x) = nk_import("Ag(IR-Babar)", x)
+nSiIR(x) = nk_import("Si(IR-Li-RINFO)", x)
+nSiO2IR(x) = nk_import("SiO2(IR)", x)
+
 
 
 
@@ -78,12 +91,12 @@ Ri = Array{Float64}(nwl)
 Ti = Array{Float64}(nwl)
 mlat = Lattice2D(500, pi/2)
 for i = 1:nwl
-    matSiO2 =  Material("nk", nSiO2(wl[i]))
+    matSi =  Material("nk", nSiO2(wl[i]))
     matPMMA = Material("nk", nPMMA(wl[i]))
     matAg = Material("nk", nAg_Wi(wl[i]))
     L0  = Layer()
     Lhole =  make_hole(1, Material(), matPMMA, 100, 10, mlat)
-    L1 = Layer("c", matAg, 15)
+    L1 = Layer("c", matPMMA, 15)
     L2 = Layer("i", matSiO2, 1e6)
     Ls = [L0; Lhole; L1; L2; L0]
     S = Stack(Ls, zeros(length(Ls)-1))
