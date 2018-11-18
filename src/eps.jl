@@ -9,7 +9,7 @@ function nk_import(fname, x)
             n_data = readdlm(joinpath(path_eps, f))
             n_re = Spline1D(n_data[:,1], n_data[:, 2])
             n_im = Spline1D(n_data[:, 1], n_data[:, 3])
-            return complex(n_re(x), n_im(x))
+            return complex.(n_re(x), n_im(x))
         end
     end
 end

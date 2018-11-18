@@ -148,8 +148,8 @@ end
 function tmm_matrix(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
     local k0 = 2.0*pi/lambda;
     local q = norm(kp);
-    Mg = eye(Complex64, 2)
-    Ml = zeros(Complex64, (2,2))
+    Mg = eye(ComplexF32, 2)
+    Ml = zeros(ComplexF32, (2,2))
     L::Layer = Layer()
     I::Interface = Interface()
     nL = length(S.Layers)
