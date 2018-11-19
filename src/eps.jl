@@ -3,19 +3,24 @@ using DelimitedFiles
 using Interpolations
 using Dierckx
 path_eps = "C:\\Users\\vmkhi\\Documents\\Github\\MultiTMM\\eps_data"
-function nk_import(fname, x)
-    for f in filter(x -> ismatch(r"\.csv|\.txt", x), readdir(path_eps))
-        for f in filter(x -> startswith(x, fname), readdir(path_eps))
-            n_data = readdlm(joinpath(path_eps, f))
-            n_re = Spline1D(n_data[:,1], n_data[:, 2])
-            n_im = Spline1D(n_data[:, 1], n_data[:, 3])
-            return complex.(n_re(x), n_im(x))
-        end
-    end
+function nk_import(filename, x; path = eps_path)
+     file = filter(f-> startswith(f, filename) && endswith(f, ".txt"), readdir(eps_path))
+     if !isempty(file)
+         data = readdlm(joinpath(eps_path, file[1]))
+         if size(data, 2) < 2
+             throw("The data file must have at least two columns")
+         elseif size(data, 2) == 2
+             n_re = Spline1D(data[:,1], data[:, 2])
+             return complex.(n_re(x), 0.0)
+         else
+             n_re = Spline1D(data[:,1], data[:, 2])
+             n_im = Spline1D(data[:, 1], data[:, 3])
+             return complex.(n_re(x), n_im(x))
+         end
+     else
+         throw("The specified file is not in the directory")
+     end
 end
-
-
-
 
 function eps_Au(w)
     hartree = 27.2116;              #  2 * Rydberg in eV
