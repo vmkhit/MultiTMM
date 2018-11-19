@@ -2,8 +2,8 @@ using DataFrames
 using DelimitedFiles
 using Interpolations
 using Dierckx
-path_eps = "C:\\Users\\vmkhi\\Documents\\Github\\MultiTMM\\eps_data"
-function nk_import(filename, x; path = path_eps)
+eps_path = "C:\\Users\\vmkhi\\Documents\\Github\\MultiTMM\\eps_data"
+function nk_import(filename, x; path = eps_path)
      file = filter(f-> startswith(f, filename) && endswith(f, ".txt"), readdir(eps_path))
      if !isempty(file)
          data = readdlm(joinpath(eps_path, file[1]))
