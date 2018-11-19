@@ -1,6 +1,6 @@
 using MultiTMM
 using PyPlot
-
+pygui(true)
 
 function drude_pole(w, epsb, wp, gam)
     return epsb - wp^2/(w*(w+im*gam))
@@ -9,12 +9,12 @@ end
 #parameters and w-theta ranges
 const nm2eV = 1239.84193
 const nth = 4
-th = linspace(60, 75, nth)
+th = range(60, 75, length = nth)
 
 
 # import the experimental data
-DATA1 = Array{Float64}(1103-79, 5, nth)
-DATA2 = Array{Float64}(1103-79, 5, nth)
+DATA1 = Array{Float64}(undef, 1103-79, 5, nth)
+DATA2 = Array{Float64}(undef, 1103-79, 5, nth)
 
 path_ell = "C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Nanogune\\Ellipsometry\\"
 
@@ -27,7 +27,7 @@ for i = 1:nth
 end
 
 ww = DATA1[1, :, 1]
-ww = linspace(1, 6, 500)
+ww = range(1, 6, length = 500)
 nw = length(ww)
 
 
