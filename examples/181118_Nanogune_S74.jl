@@ -8,23 +8,27 @@ function drude_pole(w, epsb, wp, gam)
 end
 
 #parameters and w-theta ranges
-const nm2eV = 1239.84193
-const nth = 4
+nm2eV = 1239.84193
+nth = 4
 th = range(60, 75, length = nth)
 
 
 # import the experimental data
 DATA1 = Array{Float64}(undef, 1103-79, 5, nth)
 DATA2 = Array{Float64}(undef, 1103-79, 5, nth)
+DATA3 = Array{Float64}(undef, 1103-79, 5, nth)
+
 
 path_ell = "C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Nanogune\\Ellipsometry\\"
 
 for i = 1:nth
     theta = round(Int, th[i])
-    file1 = readdlm(join([path_ell, "181116_Chip-Zaka-Laura-S72-9ML_13ML_an15_Ag_pos2_", string(theta),".pae"]))
-    file2 = readdlm(join([path_ell, "181116_Chip-Zaka-Laura-S72-9ML_13ML_an15_Ag_pos1_", string(theta),".pae"]))
+    file1 = readdlm(join([path_ell, "181120_Chip-Zaka-Laura-S74-8ML_an15_Ag_pos1_", string(theta),".pae"]))
+    file2 = readdlm(join([path_ell, "181120_Chip-Zaka-Laura-S74-8ML_an15_Ag_pos2_", string(theta),".pae"]))
+    file3 = readdlm(join([path_ell, "181120_Chip-Zaka-Laura-S74-8ML_an15_Si_pos1_", string(theta),".pae"]))
     DATA1[:, :, i] = file1[79:end-1, 1:5]
     DATA2[:, :, i] = file2[79:end-1, 1:5]
+    DATA3[:, :, i] = file2[79:end-1, 1:5]
 end
 
 ww = DATA1[1, :, 1]
@@ -45,7 +49,7 @@ begin
     blist = [0.5, 1, 2, 5, 10, 20, 50]
     TanPsi = Array{Float64}(undef, nw, nth, length(blist))
     CosDel = Array{Float64}(undef, nw, nth, length(blist))
-    NML = 12
+    NML = 8
     tc = 1.0
     for (l, bl) = enumerate(blist)
         for j = 1:nth
@@ -77,9 +81,9 @@ begin
     for i = 1:nth
         thi = round(Int, th[i])
         subplot(1, 2, 1)
-        plot(DATA1[:, 1, i], DATA1[:, 2, i], linestyle="-", color = cmap1((i+2)/float(2*nth)), label = "Ag 9ML, θ =$thi\$^o\$")
-        plot(DATA2[:, 1, i], DATA2[:, 2, i], linestyle="-", color = cmap2((i+2)/float(2*nth)), label = "Ag 12ML, θ =$thi\$^o\$")
-        #plot(DATA3[:, 1, i], DATA3[:, 2, i], linestyle="--", color = "black", label = "Si, θ =$thi\$^o\$")
+        plot(DATA1[:, 1, i], DATA1[:, 2, i], linestyle="-", color = cmap1((i+2)/float(2*nth)), label = "Ag pos1, θ =$thi\$^o\$")
+        plot(DATA2[:, 1, i], DATA2[:, 2, i], linestyle="-", color = cmap2((i+2)/float(2*nth)), label = "Ag pos2, θ =$thi\$^o\$")
+        plot(DATA3[:, 1, i], DATA3[:, 2, i], linestyle="--", color = "black", label = "Si, θ =$thi\$^o\$")
 
         #for (l, bl) = enumerate(blist)
         #    plot(ww, TanPsi[:, i, l], linestyle="--", color = cmap2((l)/float(length(blist))), label = label = "γ/γ\$_{JC}\$ = $bl")
@@ -91,9 +95,9 @@ begin
 
         subplot(1, 2, 2)
         #color = cmap2((i+2)/float(2*nth))
-        plot(DATA1[:, 1, i], DATA1[:, 3, i], linestyle="-", color = cmap1((i+2)/float(2*nth)), label = "Ag 9ML, θ =$thi\$^o\$")
-        plot(DATA2[:, 1, i], DATA2[:, 3, i], linestyle="-", color = cmap2((i+2)/float(2*nth)), label = "Ag 12ML, θ =$thi\$^o\$")
-        #plot(DATA3[:, 1, i], DATA3[:, 3, i], linestyle="--", color = "black", label = "Si, θ =$thi\$^o\$ ")
+        plot(DATA1[:, 1, i], DATA1[:, 3, i], linestyle="-", color = cmap1((i+2)/float(2*nth)), label = "Ag pos1, θ =$thi\$^o\$")
+        plot(DATA2[:, 1, i], DATA2[:, 3, i], linestyle="-", color = cmap2((i+2)/float(2*nth)), label = "Ag pos2, θ =$thi\$^o\$")
+        plot(DATA3[:, 1, i], DATA3[:, 3, i], linestyle="--", color = "black", label = "Si, θ =$thi\$^o\$ ")
         #for (l, bl) = enumerate(blist)
         #    plot(ww, CosDel[:, i, l], linestyle ="--", color = cmap2((l)/float(length(blist))), label = "γ/γ\$_{JC}\$ = $bl")
         #end
@@ -105,5 +109,5 @@ begin
     #suptitle("20ML with \$ \\gamma \$ = 1.0 \$ \\gamma_{JC}\$", fontsize = 16)
     legend(bbox_to_anchor=(0.9999, 1), loc=2)
     #tight_layout()
-    savefig("C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Chip-Zaka-Laura-S72\\Pictures\\S72_exp_all.png")
+    savefig("C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Chip-Zaka-Laura-S74-8ML\\Pictures\\S74_exp_all.png")
 end

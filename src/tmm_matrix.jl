@@ -72,7 +72,7 @@ function extract_params(input::Union{Material, Interface, Layer})
 end
 
 function update_interface_list(L::Vector{Layer}, sig::Vector{<:Number}, nl::Integer)
-    Is =  Vector{Interface}(nl -1)
+    Is =  Vector{Interface}(undef, nl -1)
     for i = 1:(nl -1)
         Is[i] = Interface(L[i].mat, L[i+1].mat, sig[i])
     end
@@ -190,8 +190,8 @@ end
 function RT_matrix_inc(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
     local k0 = 2.0*pi/lambda;
     local q = norm(kp);
-    Mg = eye(Complex64, 2)
-    Ml = zeros(Complex64, (2,2))
+    Mg = [1.0 + 0.0im 0.0 + 0.0im; 0.0 + 0.0im 1.0 + 0.0im]
+    Ml = zeros(ComplexF32, (2,2))
     L::Layer = Layer()
     I::Interface = Interface()
     nL = length(S.Layers)
