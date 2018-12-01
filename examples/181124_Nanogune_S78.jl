@@ -17,18 +17,23 @@ th = range(60, 75, length = nth)
 DATA1 = Array{Float64}(undef, 1103-79, 5, nth)
 DATA2 = Array{Float64}(undef, 1103-79, 5, nth)
 DATA3 = Array{Float64}(undef, 1103-79, 5, nth)
+DATA4 = Array{Float64}(undef, 1103-79, 5, nth)
 
 
 path_ell = "C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Nanogune\\Ellipsometry\\"
 
 for i = 1:nth
     theta = round(Int, th[i])
-    file1 = readdlm(join([path_ell, "181120_Chip-Zaka-Laura-S74-8ML_an15_Ag_pos1_", string(theta),".pae"]))
-    file2 = readdlm(join([path_ell, "181120_Chip-Zaka-Laura-S74-8ML_an15_Ag_pos2_", string(theta),".pae"]))
-    file3 = readdlm(join([path_ell, "181120_Chip-Zaka-Laura-S74-8ML_an15_Si_pos1_", string(theta),".pae"]))
+    file1 = readdlm(join([path_ell, "181129_Chip-Zaka-Laura-S78-8-12ML_an15_Ag_pos1_", string(theta),".pae"]))
+    file2 = readdlm(join([path_ell, "181129_Chip-Zaka-Laura-S78-8-12ML_an15_Ag_pos2_", string(theta),".pae"]))
+    file3 = readdlm(join([path_ell, "181129_Chip-Zaka-Laura-S78-8-12ML_an15_Ag_pos3_", string(theta),".pae"]))
+    file4 = readdlm(join([path_ell, "181129_Chip-Zaka-Laura-S78-8-12ML_an15_Si_pos1_", string(theta),".pae"]))
+
     DATA1[:, :, i] = file1[79:end-1, 1:5]
     DATA2[:, :, i] = file2[79:end-1, 1:5]
     DATA3[:, :, i] = file3[79:end-1, 1:5]
+    DATA4[:, :, i] = file4[79:end-1, 1:5]
+
 end
 
 ww = DATA1[1, :, 1]
@@ -49,7 +54,7 @@ begin
     blist = [0.5, 1, 2, 5, 10, 20, 50]
     TanPsi = Array{Float64}(undef, nw, nth, length(blist))
     CosDel = Array{Float64}(undef, nw, nth, length(blist))
-    NML = 8
+    NML = 12
     tc = 1.0
     for (l, bl) = enumerate(blist)
         for j = 1:nth
@@ -77,13 +82,14 @@ begin
     cmap2 = ColorMap("winter")
     cmap3 = ColorMap("summer")
     labels = [L"40^o", L"45^o", L"50^o", L"55^o", L"60^o", L"65^o", L"70^o", L"75^o"]
-    fig = figure("20 ML ellipsometric parameters", figsize=(16, 6))
+    fig = figure("20 ML ellipsometric parameters", figsize=(14, 6))
     for i = 1:2:nth
         thi = round(Int, th[i])
         subplot(1, 2, 1)
-        plot(DATA1[:, 1, i], DATA1[:, 2, i], linestyle="-", color = cmap1((i+2)/float(2*nth)), label = "Ag pos1, θ =$thi\$^o\$")
-        #plot(DATA2[:, 1, i], DATA2[:, 2, i], linestyle="-", color = cmap2((i+2)/float(2*nth)), label = "Ag pos2, θ =$thi\$^o\$")
-        #plot(DATA3[:, 1, i], DATA3[:, 2, i], linestyle="--", color = "black", label = "Si, θ =$thi\$^o\$")
+        plot(DATA1[:, 1, i], DATA1[:, 2, i], linestyle="-", color = cmap1((i+2)/float(2*nth)), label = "Ag 12ML, θ =$thi\$^o\$")
+        #plot(DATA2[:, 1, i], DATA2[:, 2, i], linestyle="-", color = cmap2((i+2)/float(2*nth)), label = "Ag 10ML, θ =$thi\$^o\$")
+        #plot(DATA3[:, 1, i], DATA3[:, 2, i], linestyle="-", color = cmap3((i+2)/float(2*nth)), label = "Ag 8ML, θ =$thi\$^o\$")
+        #plot(DATA4[:, 1, i], DATA4[:, 2, i], linestyle="--", color = "black", label = "Si, θ =$thi\$^o\$")
 
         for (l, bl) = enumerate(blist)
             plot(ww, TanPsi[:, i, l], linestyle="--", color = cmap2((l)/float(length(blist))), label = label = "γ/γ\$_{JC}\$ = $bl")
@@ -92,12 +98,14 @@ begin
         ylim([0, 1.0])
         xlabel("Energy (eV)")
         ylabel(L"Tan(\Psi)")
+        title("Ag 12ML + 1nm SiO2", fontsize = 16)
 
         subplot(1, 2, 2)
         #color = cmap2((i+2)/float(2*nth))
-        plot(DATA1[:, 1, i], DATA1[:, 3, i], linestyle="-", color = cmap1((i+2)/float(2*nth)), label = "Ag pos1, θ =$thi\$^o\$")
-        #plot(DATA2[:, 1, i], DATA2[:, 3, i], linestyle="-", color = cmap2((i+2)/float(2*nth)), label = "Ag pos2, θ =$thi\$^o\$")
-        #plot(DATA3[:, 1, i], DATA3[:, 3, i], linestyle="--", color = "black", label = "Si, θ =$thi\$^o\$ ")
+        plot(DATA1[:, 1, i], DATA1[:, 3, i], linestyle="-", color = cmap1((i+2)/float(2*nth)), label = "Ag 12ML, θ =$thi\$^o\$")
+        #plot(DATA2[:, 1, i], DATA2[:, 3, i], linestyle="-", color = cmap2((i+2)/float(2*nth)), label = "Ag 10ML, θ =$thi\$^o\$")
+        #plot(DATA3[:, 1, i], DATA3[:, 3, i], linestyle="-", color = cmap3((i+2)/float(2*nth)), label = "Ag 8ML, θ =$thi\$^o\$")
+        #plot(DATA4[:, 1, i], DATA4[:, 3, i], linestyle="--", color = "black", label = "Si, θ =$thi\$^o\$ ")
         for (l, bl) = enumerate(blist)
             plot(ww, CosDel[:, i, l], linestyle ="--", color = cmap2((l)/float(length(blist))), label = "γ/γ\$_{JC}\$ = $bl")
         end
@@ -105,9 +113,10 @@ begin
         ylim([-1, 0.25])
         xlabel("Energy (eV)")
         ylabel(L"Cos(\Delta)")
+        title("Ag 12ML + 1nm SiO2", fontsize = 16)
     end
-    #suptitle("20ML with \$ \\gamma \$ = 1.0 \$ \\gamma_{JC}\$", fontsize = 16)
+    #suptitle("Ag 12ML + 1nm SiO2", fontsize = 16)
     legend(bbox_to_anchor=(0.9999, 1), loc=2)
     tight_layout()
-    savefig("C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Chip-Zaka-Laura-S74-8ML\\Pictures\\S74_exp_fit.png")
+    savefig("C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Chip-Zaka-Laura-S78\\Pictures\\S78_exp_fit_12ML.png")
 end
