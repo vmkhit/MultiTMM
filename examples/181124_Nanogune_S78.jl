@@ -1,5 +1,5 @@
-#using MultiTMM
-include("C:\\Users\\vmkhi\\Documents\\Github\\MultiTMM\\examples\\layer_fresnel.jl")
+using MultiTMM
+#include("C:\\Users\\vmkhi\\Documents\\Github\\MultiTMM\\examples\\layer_fresnel.jl")
 using DelimitedFiles
 using MAT
 using PyPlot
@@ -122,7 +122,7 @@ begin
         end
 
         xlim([1.55, 5.5])
-        ylim([0, 0.8])
+        #ylim([0, 0.8])
         xlabel("Photon energy (eV)")
         ylabel("tan(\$ \\Psi \$)")
         #title("Ag 12ML + 1nm SiO2", fontsize = 16)
@@ -153,7 +153,7 @@ begin
         end
 
         xlim([1.55, 5.5])
-        ylim([-1, 0.25])
+        #ylim([-1, 0.25])
         xlabel("Photon energy (eV)")
         ylabel("cos(\$\\Delta\$)")
         #title("Ag 12ML + 1nm SiO2", fontsize = 16)

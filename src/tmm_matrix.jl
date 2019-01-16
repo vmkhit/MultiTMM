@@ -122,11 +122,31 @@ function intface_rt(p::Integer, Iij::Interface, k0::Real, kp::Vector{<:Real})
     end
     # these are only for ideal case i.e. for smooth interfaces with no conductive sheet
     # the roughfness and the conductive sheets or polarizable sheets are not implimeted yet
-
-    trev = mat1.mu*kz2*t/(mat2.mu*kz1)
-    rrev = -r
-    return r, t, rrev, trev
+    return r, t
 end
+
+function intface_rt_rev(p::Integer, Iij::Interface, k0::Real, kp::Vector{<:Real})
+    # Nottice: This is also coherent with Novotny-Hecht, since r, t
+    # in both cases are just the ratios of the electric fields for given polarization
+    # in contrast to other formulations with magnetic field ratio for p-polarized incidence
+    @assert p == 1 || p == 2
+    local q = norm(kp)
+    mat2, mat1, σ = extract_params(Iij) # just reassign the materials here to change the order
+    kz1 = betz(mat1, k0, q)
+    kz2 = betz(mat2, k0, q)
+
+    if p == 1 # s-polarization
+        r = (mat1.mu*kz2 - mat2.mu*kz1)/(mat1.mu*kz2 + mat2.mu*kz1)
+        t = 2*mat2.mu*kz1/(mat1.mu*kz2 + mat2.mu*kz1)
+    else
+        r = (mat1.eps*kz2 - mat2.eps*kz1)/(mat1.eps*kz2 + mat2.eps*kz1)
+        t = 2*mat2.eps*kz1/(mat1.eps*kz2 + mat2.eps*kz1)
+    end
+    # these are only for ideal case i.e. for smooth interfaces with no conductive sheet
+    # the roughfness and the conductive sheets or polarizable sheets are not implimeted yet
+    return r, t
+end
+
 
 function Matrix2x2_coh(r, t, rrev, trev, d)
     # I used here the general form, which will allow me to impliment the rough surface case as well
@@ -158,7 +178,8 @@ function tmm_matrix(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
     for i = 1:(nL-1)
         L = S.Layers[i]
         I = S.Interfs[i]
-        r, t, rrev, trev = intface_rt(p, I, k0, kp)
+        r, t = intface_rt(p, I, k0, kp)
+        rrev, trev = intface_rt_rev(p, I, k0, kp)
         di = betz(L.mat, k0, q)*L.d
         Ml = Matrix2x2_coh(r, t, rrev, trev, di)
         Mg  = Mg*Ml
@@ -200,7 +221,8 @@ function RT_matrix_inc(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
     for i = 1:(nL-2)
         L = S.Layers[i]
         I = S.Interfs[i]
-        r, t, rrev, trev = intface_rt(p, I, k0, kp)
+        r, t= intface_rt(p, I, k0, kp)
+        rrev, trev = intface_rt_rev(p, I, k0, kp)
         di = betz(L.mat, k0, q)*L.d
         Ml = Matrix2x2_coh(r, t, rrev, trev, di)
         Mg  = Mg*Ml
@@ -208,7 +230,9 @@ function RT_matrix_inc(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
     # calculating substrate separatly
     L = S.Layers[nL-1]
     I = S.Interfs[nL-1]
-    r, t, rrev, trev = intface_rt(p, I, k0, kp)
+    r, t= intface_rt(p, I, k0, kp)
+    rrev, trev = intface_rt_rev(p, I, k0, kp)
+
     di = betz(L.mat, k0, q)*L.d
     Ml = Matrix2x2_inc(r, t, rrev, trev, di)
     r, t, rrev, trev = rt_from_matrix(Mg)
