@@ -112,16 +112,17 @@ function intface_rt(p::Integer, Iij::Interface, k0::Real, kp::Vector{<:Real})
     mat1, mat2, σ = extract_params(Iij)
     kz1 = betz(mat1, k0, q)
     kz2 = betz(mat2, k0, q)
-    gs = mat1.mu/mat2.mu
+
     if p == 1 # s-polarization
-        g = gs
+        r = (mat1.mu*kz2 - mat2.mu*kz1)/(mat1.mu*kz2 + mat2.mu*kz1)
+        t = 2*mat2.mu*kz1/(mat1.mu*kz2 + mat2.mu*kz1)
     else
-        g = mat1.eps/mat2.eps
+        r = (mat1.eps*kz2 - mat2.eps*kz1)/(mat1.eps*kz2 + mat2.eps*kz1)
+        t = 2*mat2.eps*kz1/(mat1.eps*kz2 + mat2.eps*kz1)
     end
     # these are only for ideal case i.e. for smooth interfaces with no conductive sheet
     # the roughfness and the conductive sheets or polarizable sheets are not implimeted yet
-    r = (kz1 - g*kz2)/(kz1 + g*kz2)
-    t = sqrt(g/gs)*(1 + r)
+
     trev = mat1.mu*kz2*t/(mat2.mu*kz1)
     rrev = -r
     return r, t, rrev, trev

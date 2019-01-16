@@ -2,6 +2,8 @@ using MultiTMM
 using DelimitedFiles
 using PyPlot
 pygui(true)
+matplotlib["rcParams"][:update](["font.size" => 18, "font.weight"=>"normal", "font.family" => "Arial", "text.usetex"=>false])
+
 
 function drude_pole(w, epsb, wp, gam)
     return epsb - wp^2/(w*(w+im*gam))
@@ -73,37 +75,47 @@ begin
     cmap2 = ColorMap("winter")
     cmap3 = ColorMap("summer")
     labels = [L"40^o", L"45^o", L"50^o", L"55^o", L"60^o", L"65^o", L"70^o", L"75^o"]
-    fig = figure("20 ML ellipsometric parameters", figsize=(14, 6))
-    for i = 1:2:nth
+    fig = figure("20 ML ellipsometric parameters", figsize=(12, 6))
+    for i = 1:nth
         thi = round(Int, th[i])
         subplot(1, 2, 1)
-        plot(DATA1[:, 1, i], DATA1[:, 2, i], linestyle="-", color = cmap1((i+2)/float(2*nth)), label = "Ag pos1, θ =$thi\$^o\$")
-        #plot(DATA2[:, 1, i], DATA2[:, 2, i], linestyle="-", color = cmap2((i+2)/float(2*nth)), label = "Ag pos2, θ =$thi\$^o\$")
-
+        plot(DATA1[:, 1, i], DATA1[:, 2, i], linestyle="-", linewidth=2, color = "orange")
+        plot(DATA2[:, 1, i], DATA2[:, 2, i], linestyle="-", linewidth=2, color = "green")
+        #=
         for (l, bl) = enumerate(blist)
             plot(ww, TanPsi[:, i, l], linestyle="--", color = cmap2((l)/float(length(blist))), label = label = "γ/γ\$_{JC}\$ = $bl")
         end
+        =#
         xlim([1.55, 5.5])
-        ylim([0, 1.0])
-        xlabel("Energy (eV)")
-        ylabel(L"Tan(\Psi)")
-        title("Ag 15ML + 1.5m SiO2", fontsize = 16)
-
+        ylim([0, 0.8])
+        xlabel("Photon energy (eV)")
+        ylabel("tan(\$ \\Psi \$)")
+        #title("Ag 15ML + 1.5m SiO2", fontsize = 16)
+    end
+    plot([],[], linestyle="-", linewidth=2, color = "orange", label = "Ag 15ML, pos.1")
+    plot([],[], linestyle="-", linewidth=2, color = "green", label = "Ag 15ML, pos.2")
+    #suptitle("Ag 12ML + 1nm SiO2", fontsize = 16)
+    legend(frameon=false, fontsize = 14)
+    for i = 1:nth
         subplot(1, 2, 2)
         #color = cmap2((i+2)/float(2*nth))
-        plot(DATA1[:, 1, i], DATA1[:, 3, i], linestyle="-", color = cmap1((i+2)/float(2*nth)), label = "Ag pos1, θ =$thi\$^o\$")
-        #plot(DATA2[:, 1, i], DATA2[:, 3, i], linestyle="-", color = cmap2((i+2)/float(2*nth)), label = "Ag pos2, θ =$thi\$^o\$")
+        plot(DATA1[:, 1, i], DATA1[:, 3, i], linestyle="-", linewidth=2, color = "orange")
+        plot(DATA2[:, 1, i], DATA2[:, 3, i], linestyle="-", linewidth=2, color = "green")
+        #=
         for (l, bl) = enumerate(blist)
             plot(ww, CosDel[:, i, l], linestyle ="--", color = cmap2((l)/float(length(blist))), label = "γ/γ\$_{JC}\$ = $bl")
         end
+        =#
         xlim([1.55, 5.5])
         ylim([-1, 0.25])
-        xlabel("Energy (eV)")
-        ylabel(L"Cos(\Delta)")
-        title("Ag 15ML + 1.5nm SiO2", fontsize = 16)
+        xlabel("Photon energy (eV)")
+        ylabel("cos(\$\\Delta\$)")
+        #title("Ag 15ML + 1.5nm SiO2", fontsize = 16)
     end
+    plot([],[], linestyle="-", linewidth=2, color = "orange", label = "Ag 15ML, pos.1")
+    plot([],[], linestyle="-", linewidth=2, color = "green", label = "Ag 15ML, pos.2")
     #suptitle("Ag 12ML + 1nm SiO2", fontsize = 16)
-    legend(bbox_to_anchor=(0.9999, 1), loc=2)
+    legend(frameon=false, fontsize = 14)
     tight_layout()
-    savefig("C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Chip-HS2-Prepatterned-Si\\Pictures\\Chip-HS2-prepatterened_exp_fit.png")
+    savefig("C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Cleaned experimental data\\Ellipsometry_15ML.png", transparent = true)
 end
