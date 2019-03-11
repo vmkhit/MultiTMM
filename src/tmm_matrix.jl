@@ -148,8 +148,8 @@ end
 function tmm_matrix(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
     local k0 = 2.0*pi/lambda;
     local q = norm(kp);
-    Mg = Matrix{Complex{Float64}}(I, 2,2)
-    Ml = zeros(Complex64, (2,2))
+    Mg = Matrix{ComplexF64}(I, 2,2)
+    Ml = zeros(ComplexF64, (2,2))
     L::Layer = Layer()
     Ifs::Interface = Interface()
     nL = length(S.Layers)
@@ -190,8 +190,8 @@ end
 function RT_matrix_inc(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
     local k0 = 2.0*pi/lambda;
     local q = norm(kp);
-    Mg = Matrix{Complex{Float64}}(I,2,2)
-    Ml = zeros(Complex64, (2,2))
+    Mg = Matrix{ComplexF64}(I,2,2)
+    Ml = zeros(ComplexF64, (2,2))
     L::Layer = Layer()
     Ifs::Interface = Interface()
     nL = length(S.Layers)
