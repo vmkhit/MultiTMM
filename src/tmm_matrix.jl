@@ -148,15 +148,15 @@ end
 function tmm_matrix(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
     local k0 = 2.0*pi/lambda;
     local q = norm(kp);
-    Mg = Matrix{Complex{Float64}}(I,2,2)
+    Mg = Matrix{Complex{Float64}}(I, 2,2)
     Ml = zeros(Complex64, (2,2))
     L::Layer = Layer()
-    I::Interface = Interface()
+    Ifs::Interface = Interface()
     nL = length(S.Layers)
     for i = 1:(nL-1)
         L = S.Layers[i]
-        I = S.Interfs[i]
-        r, t, rrev, trev = intface_rt(p, I, k0, kp)
+        Ifs = S.Interfs[i]
+        r, t, rrev, trev = intface_rt(p, Ifs, k0, kp)
         di = betz(L.mat, k0, q)*L.d
         Ml = Matrix2x2_coh(r, t, rrev, trev, di)
         Mg  = Mg*Ml
@@ -193,20 +193,20 @@ function RT_matrix_inc(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
     Mg = Matrix{Complex{Float64}}(I,2,2)
     Ml = zeros(Complex64, (2,2))
     L::Layer = Layer()
-    I::Interface = Interface()
+    Ifs::Interface = Interface()
     nL = length(S.Layers)
     for i = 1:(nL-2)
         L = S.Layers[i]
-        I = S.Interfs[i]
-        r, t, rrev, trev = intface_rt(p, I, k0, kp)
+        Ifs = S.Interfs[i]
+        r, t, rrev, trev = intface_rt(p, Ifs, k0, kp)
         di = betz(L.mat, k0, q)*L.d
         Ml = Matrix2x2_coh(r, t, rrev, trev, di)
         Mg  = Mg*Ml
     end
     # calculating substrate separatly
     L = S.Layers[nL-1]
-    I = S.Interfs[nL-1]
-    r, t, rrev, trev = intface_rt(p, I, k0, kp)
+    Ifs = S.Interfs[nL-1]
+    r, t, rrev, trev = intface_rt(p, Ifs, k0, kp)
     di = betz(L.mat, k0, q)*L.d
     Ml = Matrix2x2_inc(r, t, rrev, trev, di)
     r, t, rrev, trev = rt_from_matrix(Mg)
