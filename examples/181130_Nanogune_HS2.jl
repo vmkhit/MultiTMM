@@ -47,7 +47,7 @@ begin
     blist = [0.5, 1, 2, 5, 10, 20, 50]
     TanPsi = Array{Float64}(undef, nw, nth, length(blist))
     CosDel = Array{Float64}(undef, nw, nth, length(blist))
-    NML = 15
+    NML = 12
     tc = 1.5
     for (l, bl) = enumerate(blist)
         for j = 1:nth
@@ -80,12 +80,12 @@ begin
         thi = round(Int, th[i])
         subplot(1, 2, 1)
         plot(DATA1[:, 1, i], DATA1[:, 2, i], linestyle="-", linewidth=2, color = "orange")
-        plot(DATA2[:, 1, i], DATA2[:, 2, i], linestyle="-", linewidth=2, color = "green")
-        #=
+        #plot(DATA2[:, 1, i], DATA2[:, 2, i], linestyle="-", linewidth=2, color = "green")
+
         for (l, bl) = enumerate(blist)
             plot(ww, TanPsi[:, i, l], linestyle="--", color = cmap2((l)/float(length(blist))), label = label = "γ/γ\$_{JC}\$ = $bl")
         end
-        =#
+
         xlim([1.55, 5.5])
         ylim([0, 0.8])
         xlabel("Photon energy (eV)")
@@ -96,16 +96,16 @@ begin
     plot([],[], linestyle="-", linewidth=2, color = "green", label = "Ag 15ML, pos.2")
     #suptitle("Ag 12ML + 1nm SiO2", fontsize = 16)
     legend(frameon=false, fontsize = 14)
-    for i = 1:nth
+    for i = 1:2:nth
         subplot(1, 2, 2)
         #color = cmap2((i+2)/float(2*nth))
         plot(DATA1[:, 1, i], DATA1[:, 3, i], linestyle="-", linewidth=2, color = "orange")
-        plot(DATA2[:, 1, i], DATA2[:, 3, i], linestyle="-", linewidth=2, color = "green")
-        #=
+        #plot(DATA2[:, 1, i], DATA2[:, 3, i], linestyle="-", linewidth=2, color = "green")
+
         for (l, bl) = enumerate(blist)
             plot(ww, CosDel[:, i, l], linestyle ="--", color = cmap2((l)/float(length(blist))), label = "γ/γ\$_{JC}\$ = $bl")
         end
-        =#
+
         xlim([1.55, 5.5])
         ylim([-1, 0.25])
         xlabel("Photon energy (eV)")
@@ -117,5 +117,5 @@ begin
     #suptitle("Ag 12ML + 1nm SiO2", fontsize = 16)
     legend(frameon=false, fontsize = 14)
     tight_layout()
-    savefig("C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Cleaned experimental data\\Ellipsometry_15ML.png", transparent = true)
+    #savefig("C:\\Users\\vmkhi\\Documents\\Projects\\Ribbons\\Cleaned experimental data\\Ellipsometry_15ML.png", transparent = true)
 end
