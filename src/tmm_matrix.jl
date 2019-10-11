@@ -102,7 +102,8 @@ end
 function betz(mat::Material, k::Number, q::Real)
     return sqrt(mat.eps*mat.mu*k^2 - q^2 + 0.0im)
 end
-function intface_rt(p::Integer, Iij::Interface, k0::Real, kp::Vector{<:Real})
+
+function intface_rt!(p::Integer, Iij::Interface, k0::Real, kp::Vector{<:Real})
     # Nottice: This is also coherent with Novotny-Hecht, since r, t
     # in both cases are just the ratios of the electric fields for given polarization
     # in contrast to other formulations with magnetic field ratio for p-polarized incidence
@@ -114,7 +115,7 @@ function intface_rt(p::Integer, Iij::Interface, k0::Real, kp::Vector{<:Real})
     gs = mat1.mu/mat2.mu
     if p == 1 # s-polarization
         g = gs
-    else
+    else     # p-polarization
         g = mat1.eps/mat2.eps
     end
     # these are only for ideal case i.e. for smooth interfaces with no conductive sheet
@@ -123,6 +124,32 @@ function intface_rt(p::Integer, Iij::Interface, k0::Real, kp::Vector{<:Real})
     t = sqrt(g/gs)*(1 + r)
     trev = mat1.mu*kz2*t/(mat2.mu*kz1)
     rrev = -r
+    return r, t, rrev, trev
+end
+
+function intface_rt(p::Integer, Iij::Interface, k0::Real, kp::Vector{<:Real})
+    # Nottice: This is also coherent with Novotny-Hecht, since r, t
+    # in both cases are just the ratios of the electric fields for given polarization
+    # in contrast to other formulations with magnetic field ratio for p-polarized incidence
+    @assert p == 1 || p == 2
+    local q = norm(kp)
+    mat1, mat2, σ = extract_params(Iij)
+    kz1 = betz(mat1, k0, q)
+    kz2 = betz(mat2, k0, q)
+
+    if p == 1 # s-polarization
+        r = (mat2.mu*kz1 - mat1.mu*kz2)/(mat2.mu*kz1 + mat1.mu*kz2)
+        t = 1 + r
+        rrev = -r
+        trev = 1 + rrev
+    else     # p-polarization
+        r = (mat2.eps*kz1 - mat1.eps*kz2)/(mat2.eps*kz1 + mat1.eps*kz2)
+        t = mat2.eps*kz1*(1 - r)/(mat1.eps*kz2)
+        rrev = -r
+        trev = mat1.eps*kz2*(1 - rrev)/(mat2.eps*kz1)
+    end
+    # these are only for ideal case i.e. for smooth interfaces with no conductive sheet
+    # the roughfness and the conductive sheets or polarizable sheets are not implimeted yet
     return r, t, rrev, trev
 end
 
