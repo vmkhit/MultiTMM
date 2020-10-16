@@ -16,21 +16,21 @@ nth = 4
 th = range(60, 75, length = nth)
 
 # import the experimental data
-DHS12_1 = Array{Float64}(undef, 1103-79, 5, nth)
-DHS12_2 = Array{Float64}(undef, 1103-79, 5, nth)
+DHS13_1 = Array{Float64}(undef, 1103-79, 5, nth)
+DHS13_2 = Array{Float64}(undef, 1103-79, 5, nth)
 
 
-path_HS12 = "C:\\Users\\vmkhitaryan\\Documents\\Projects\\Ag Ribbons\\Chip-Andrew-HS12\\Ellipsometry\\"
+path_HS13 = "C:\\Users\\vmkhitaryan\\Documents\\Projects\\Ag Ribbons\\Chip-Andrew-HS13\\Ellipsometry\\"
 for i = 1:nth
     theta = round(Int, th[i])
-    fHS12_1 = readdlm(join([path_HS12, "191009_Chip-Andrew-HS12-15MLplus_an15_Si_", string(theta),".pae"]))
-    fHS12_2 = readdlm(join([path_HS12, "191009_Chip-Andrew-HS12-15MLplus_an15_Ag_", string(theta),".pae"]))
+    fHS13_1 = readdlm(join([path_HS13, "191011_Chip-Andrew-HS13-10MLplus_an15_Si_", string(theta),".pae"]))
+    fHS13_2 = readdlm(join([path_HS13, "191011_Chip-Andrew-HS13-10MLplus_an15_Ag_", string(theta),".pae"]))
 
-    DHS12_1[:, :, i] = fHS12_1[79:end-1, 1:5]
-    DHS12_2[:, :, i] = fHS12_2[79:end-1, 1:5]
+    DHS13_1[:, :, i] = fHS13_1[79:end-1, 1:5]
+    DHS13_2[:, :, i] = fHS13_2[79:end-1, 1:5]
 end
 
-ww = DHS12_1[:, 1, 1]
+ww = DHS13_1[:, 1, 1]
 nw = length(ww)
 
 nAg_JC= nk_import("Ag(JC-eV)",  ww)
@@ -83,41 +83,41 @@ begin
 
     labels = [L"40^o", L"45^o", L"50^o", L"55^o", L"60^o", L"65^o", L"70^o", L"75^o"]
 
-    fig = figure("15 ML ellipsometric parameters", figsize=(12, 6))
+    fig = figure("10 ML ellipsometric parameters", figsize=(12, 6))
     clf()
     subplot(1, 2, 1)
-    for i = 1:3:nth
+    for i = 1:nth
         thi = round(Int, th[i])
 
-        #plot(DHS12_1[:, 1, i], DHS12_1[:, 2, i], linestyle="-", linewidth=2, color = "blue")
-        plot(DHS12_2[:, 1, i], DHS12_2[:, 2, i], linestyle="-", linewidth=2, color = "orange")
+        plot(DHS13_1[:, 1, i], DHS13_1[:, 2, i], linestyle="-", linewidth=2, color = "blue")
+        plot(DHS13_2[:, 1, i], DHS13_2[:, 2, i], linestyle="-", linewidth=2, color = "orange")
 
 
-        for (l, bl) = enumerate(blist)
-             plot(ww, TanPsi[:, i, l], linestyle="--", color = cmap2((l)/float(length(blist))))
-        end
+        #for (l, bl) = enumerate(blist)
+        #     plot(ww, TanPsi[:, i, l], linestyle="--", color = cmap2((l)/float(length(blist))))
+        #end
 
         xlim([1.55, 5.5])
         ylim([0, 1.0])
         xlabel("Photon energy (eV)")
         ylabel("tan(\$ \\Psi \$)")
     end
-    #plot([],[], linestyle="-", linewidth=2, color = "blue", label = "HS12, Si")
-    plot([],[], linestyle="-", linewidth=2, color = "orange", label = "HS12, Ag")
+    plot([],[], linestyle="-", linewidth=2, color = "blue", label = "HS13, Si")
+    plot([],[], linestyle="-", linewidth=2, color = "orange", label = "HS13, Ag")
     legend(frameon=false, fontsize = 14)
     tight_layout()
 
     subplot(1, 2, 2)
-    for i = 1:3:nth
+    for i = 1:nth
         color = cmap2((i+2)/float(2*nth))
 
-        #plot(DHS12_1[:, 1, i], DHS12_1[:, 3, i], linestyle="-", linewidth=2, color = "blue")
-        plot(DHS12_2[:, 1, i], DHS12_2[:, 3, i], linestyle="-", linewidth=2, color = "orange")
+        plot(DHS13_1[:, 1, i], DHS13_1[:, 3, i], linestyle="-", linewidth=2, color = "blue")
+        plot(DHS13_2[:, 1, i], DHS13_2[:, 3, i], linestyle="-", linewidth=2, color = "orange")
 
 
-        for (l, bl) = enumerate(blist)
-            plot(ww, CosDel[:, i, l], linestyle ="--", color = cmap2((l)/float(length(blist))))
-        end
+        #for (l, bl) = enumerate(blist)
+        #    plot(ww, CosDel[:, i, l], linestyle ="--", color = cmap2((l)/float(length(blist))))
+        #end
 
         xlim([1.55, 5.5])
         ylim([-1, 0.25])
@@ -125,11 +125,11 @@ begin
         ylabel("cos(\$\\Delta\$)")
         #title("Ag 12ML + 2nm SiO2", fontsize = 16)
     end
-    #plot([],[], linestyle="-", linewidth=2, color = "blue", label = "HS12, Si")
-    plot([],[], linestyle="-", linewidth=2, color = "orange", label = "HS12, Ag")
+    plot([],[], linestyle="-", linewidth=2, color = "blue", label = "HS13, Si")
+    plot([],[], linestyle="-", linewidth=2, color = "orange", label = "HS13, Ag")
 
     legend(frameon=false, fontsize = 14)
     tight_layout()
-    suptitle("Ag 15ML + 2nm SiO2", fontsize = 16)
-    savefig(join([path_HS12,"\\Pictures\\10ML_2nm_HS12_exp_fit.png"]), transparent = true)
+    suptitle("Ag 10ML + 1nm SiO2", fontsize = 16)
+    savefig(join([path_HS13,"\\Pictures\\HS13_exp_only.png"]), transparent = true)
 end
