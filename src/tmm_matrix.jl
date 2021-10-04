@@ -213,7 +213,6 @@ function tmm_ellipso(lambda::Real, kp::Vector{<:Real}, S::Stack)
     return abs(rr), cos(angle(rr))
 end
 
-
 function RT_matrix_inc(p::Integer, lambda::Real, kp::Vector{<:Real}, S::Stack)
     local k0 = 2.0*pi/lambda;
     local q = norm(kp);
