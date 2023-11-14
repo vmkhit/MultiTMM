@@ -2,7 +2,7 @@ using DataFrames
 using DelimitedFiles
 using Interpolations
 using Dierckx
-eps_path = "C:/Users/vmkhitaryan/Documents/Github/MultiTMM/eps_data"
+eps_path = "C:/Users/vmkhi/Documents/Github/MultiTMM/eps_data"
 function nk_import(filename, x; path = eps_path)
      file = filter(f-> startswith(f, filename) && endswith(f, ".txt"), readdir(eps_path))
      if !isempty(file)
